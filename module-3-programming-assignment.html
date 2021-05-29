@@ -1,0 +1,282 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 3 Programming Assignment</title>
+<style>* { font-family: monospace; }</style>
+<script>
+
+// NOTE: You must implement the data structures using the no prototype approach.
+//       This is what the book uses, so you can copy it.
+//       See also: https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+
+// NOTE: Please review the following links regularly:
+//       https://it.pointpark.edu/tutorials/arrays-vs-objects/
+//       https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+//       https://it.pointpark.edu/tutorials/implementation-vs-interface/
+
+
+
+//--------------------------------//
+// The linked list data structure //
+//--------------------------------//
+console.log("The linked list data structure");
+
+// 1. Suppose you have an array with 1,000 elements and a linked list with 1,000
+//    elements. For both data structures, you want to retrieve the last entry.
+//    Does one data structure complete that operation before the other (i.e.,
+//    is it faster)? If yes, how much faster? If no, why does it take the same
+//    amount of time?
+
+//Arrays would be faster to get the last element.  The reason is becuasae for a linked list, it would
+//need to run through all previous 999 elements before getting the last one.  Due to the nature of
+//how it works, it is very rigid in how it gets elements.  You can not search for a specific element.
+//It needs to run through all elements (from beginning to wherever it is needed) in order to work.
+//Arrays on the other hand don't need to run through all elements.  If it is the last element, you
+//can get the the length of the array and them use (arrayname[array.length]) to get the element without
+//going through all 999 other elements.
+
+
+//------------------------//
+// Creating a linked list //
+//------------------------//
+console.log("Creating a linked list");
+
+// We are going to implement the linked list data structure described in the
+// book. Instead of using 'let' we use 'var' everywhere. Note that this
+// implementation does not use the prototype (see homework). Here is a skeleton
+// that we will work on completing:
+function LinkedList() {
+  // helper class
+  function Node(element) {
+    this.element = element;
+    this.next = null;
+  }
+
+  // store length and head
+  var length = 0;
+  var head = null;
+
+  this.append = function(element) {
+    var node = new Node(element);
+    var current;
+
+    if (head === null) {
+      head = node;
+    }
+    else {
+      current = head;
+      while(current.next){
+        current = current.next;
+      }
+      current.next = node;
+    }
+    length++;
+  };
+
+  this.insert = function(position, element) {
+    if (position >= 0 && position <= length) {
+      var node = new Node(element);
+      var current = head;
+      var previous;
+      var index = 0;
+
+      if (position === 0) {
+        node.next = current;
+        head = node;
+      }
+      else {
+        while (index++ < position) {
+          previous = current;
+          current = current.next;
+        }
+        node.next = current;
+        previous.next = node;
+      }
+      length++;
+      return true;
+    }
+    else {
+      return false;
+    }
+  };
+
+  this.removeAt = function(position) {
+    if (position > -1 && position < length) {
+      var current = head;
+      var previous;
+      var index = 0;
+
+      if (position === 0) {
+        head = current.next;
+      }
+      else {
+        while (index++ < position) {
+          previous = current;
+          current = current.next;
+        }
+        previous.next = current.next;
+      }
+      length--;
+      return current.element;
+    }
+
+    else {
+      return null;
+    }
+  };
+
+  this.remove = function(element) {
+    var index = this.indexOf(element);
+    return this.removeAt(index);
+  };
+
+  this.indexOf = function(element) {
+    var current = head;
+    var index = 0;
+
+    while (current) {
+      if (element === current.element) {
+        return index;
+      }
+      index++;
+      current = current.next;
+    }
+    return -1;
+  };
+
+  this.isEmpty = function() {
+    return length === 0;
+  };
+
+  this.size = function() {
+    return length;
+  };
+
+  this.getHead = function() {
+    return head;
+  };
+
+  this.toString = function() {
+    // overwrite the default toString method
+    var current = head;
+    var string = "List: ";
+    while (current) {
+      string += current.element + (current.next ? " -> " : "");
+      current = current.next;
+    }
+    return string;
+  };
+
+  this.print = function() {
+    // print to the console
+    console.log(this.toString());
+  };
+}
+// create a linked list to operate on
+var list = new LinkedList();
+
+// 1. Write pseudo code (meaning; use comments) to describe how you would
+//    implement the append method. HINT: What two scenarios can you distinguish?
+
+/*First the node needs to take in a element that is going to be in that node.  This will be a parameter.
+Then the element needs to actually be assigned to a node.  There also needs a current counter that has the
+current element contained within it.
+
+It then checks to see if the head is null (no nodes implemented).  If it is, the new node becomes the head.
+
+If there is already a head, it will loop the nodes until it reaches the end and add the new node to the end of the list.
+
+Regaurdless if there is a head or not, it assigns the current head to be the next one on the list and updates the length.
+*/
+
+
+// 2. Translate your pseudo code into actual code and test it.
+//    HINT: Use list.print() to test your code.
+
+list.append(1);
+list.append(2);
+list.append(3);
+list.print();
+
+// 3. Repeat (1) and (2) for insert.
+/*
+Insert is used to insert a element at a specific position.  So we will need the parameters position and element.
+
+It first checks to make sure the position is within the list.  It then creates a node with the element, assigns the head to be the current node,
+and creates a previous and index variables which will be used later.  It then checks if the new element is going to be the new head.  If it is,
+it assigns the next node to be the current one and sets the head to be the current node. If it is not going to be the new head, it keeps scrolling
+through the list until it gets to the right position.  It then adds the new node and updates the length.
+*/
+
+list.insert(1,4);
+list.print();
+
+// 4. Repeat (1) and (2) for removeAt.
+
+/*
+RemoveAt removes a node at a specific position.  The parameters that is needed for this is the position.
+
+It again first checks to make sure the position is within the list.  It then assigns the head to be the current node.  It also creates a prevoious
+and index node which will be used later.  It then checks if the position is the head.  If it is, it assigns the next node to be the head.  If not,
+it will scroll though the list until it finds the position.  It then fixes the gap by assigning the previous node's next node to be the one after the
+node being removed.  It then shortens the length by one and returns the current element.  If the first check fails, it returns null.
+
+*/
+
+list.removeAt(3);
+list.print();
+
+// 5. Repeat (1) and (2) for remove.
+
+/*
+Remove finds and removes a element.  The only parameter we need for this is the element that needs removed.
+
+A variable named index will be created and uses the indexOf function to find the index of the element.  It then uses the removeAt function to
+remove the element at that index.  It will also return this value.
+
+*/
+
+list.remove(4);
+list.print();
+
+// 6. Repeat (1) and (2) for indexOf.
+/*
+indexOf finds the index of a element and returns it.  The parameter for this function will be the element that needs to be found.  Like most other
+functions for this project, the current is assigned to the head and the index is assigned to 0.
+
+Using a while statement, it will run through all elements in the list.  If they match the one being searched for, it will return the index location
+it was found.  If it can't find it, it will return -1.
+
+*/
+
+console.log("Finding the number 1.  Found at index " + list.indexOf(1));
+
+// 7. Repeat (1) and (2) for isEmpty.
+
+/*
+IsEmpty checks if the lenght of the list is 0 (the list is empty).
+*/
+
+console.log(list.isEmpty());
+
+// 8. Repeat (1) and (2) for size.
+
+/*
+Size returns the length of the list.
+*/
+console.log(list.size());
+
+// 9. Repeat (1) and (2) for getHead.
+
+/*
+getHead returns the first item on the list other known as the head of the list.
+*/
+console.log(list.getHead());
+
+</script>
+</head>
+<body>
+  See console!
+</body>
+</html>
